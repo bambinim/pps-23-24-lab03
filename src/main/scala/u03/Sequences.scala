@@ -2,6 +2,7 @@ package u03
 
 import u02.AnonymousFunctions.l
 import u03.Optionals.Optional
+import u02.AlgebraicDataTypes.Person
 
 object Sequences: // Essentially, generic linkedlists
   
@@ -45,7 +46,7 @@ object Sequences: // Essentially, generic linkedlists
     def flatMap[A, B](l: Sequence[A])(mapper: A => Sequence[B]): Sequence[B] = l match
       case Cons(h, t) => mapper(h) match
         case Cons(h, _) => Cons(h, flatMap(t)(mapper))
-        case _ => Nil()
+        case _ => flatMap(t)(mapper)
       case _ => Nil()
 
     def min(l: Sequence[Int]): Optional[Int] =
@@ -56,6 +57,17 @@ object Sequences: // Essentially, generic linkedlists
         case _ => currentMin
       getMin(l, Optional.Empty())
 
+    extension (l: Sequence[Person])
+      def teachersCourses(): Sequence[String] =
+        flatMap(l)(_ match
+          case Person.Teacher(_, c) => Cons(c, Nil())
+          case _ => Nil()
+        )
+
+    def foldLeft[A, B](l: Sequence[A])(acc: B)(operator: (B, A) => B): B = l match
+      case Cons(h, t) => foldLeft(t)(operator(acc, h))(operator)
+      case _ => acc
+      
 
 @main def trySequences =
   import Sequences.* 

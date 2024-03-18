@@ -7,6 +7,9 @@ import org.junit.Assert.*
 class SequenceTest:
   import u03.Sequences.*
   import Sequence.*
+  import u02.AlgebraicDataTypes.Person
+  import u02.AlgebraicDataTypes.Person.Student
+  import u02.AlgebraicDataTypes.Person.Teacher
 
   val l: Sequence[Int] = Cons(10, Cons(20, Cons(30, Nil())))
 
@@ -48,3 +51,11 @@ class SequenceTest:
     assertEquals(Just(10), min(l))
     assertEquals(Just(1), min(Cons(1, Nil())))
     assertEquals(Empty(), min(Nil()))
+
+  @Test def testStudentCourses() =
+    val sl: Sequence[Person] = Cons(Teacher("MV", "PPS"), Cons(Student("MB", 2024), Cons(Teacher("MR", "PCD"), Nil())))
+    assertEquals(Cons("PPS", Cons("PCD", Nil())), sl.teachersCourses())
+
+  @Test def testLeftFolding() =
+    assertEquals(60, foldLeft(l)(0)(_ + _))
+    assertEquals("102030", foldLeft(l)("")(_ + _))
