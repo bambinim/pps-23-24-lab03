@@ -23,17 +23,40 @@ object Sequences: // Essentially, generic linkedlists
       case Cons(h, t) if pred(h) => Cons(h, filter(t)(pred))
       case Cons(_, t)            => filter(t)(pred)
       case Nil()                 => Nil()
-
-    // Lab 03
-    def zip[A, B](first: Sequence[A], second: Sequence[B]): Sequence[(A, B)] = ???
-
-    def take[A](l: Sequence[A])(n: Int): Sequence[A] = ???
     
-    def concat[A](l1: Sequence[A], l2: Sequence[A]): Sequence[A] = ???
-    def flatMap[A, B](l: Sequence[A])(mapper: A => Sequence[B]): Sequence[B] = ???
+    def zip[A, B](first: Sequence[A], second: Sequence[B]): Sequence[(A, B)] = first match
+      case Nil() => Nil()
+      case Cons(h1, t1) => second match
+        case Nil() => Nil()
+        case Cons(h2, t2) => Cons((h1, h2), zip(t1, t2))
 
-    def min(l: Sequence[Int]): Optional[Int] = ???
+    def take[A](l: Sequence[A])(n: Int): Sequence[A] = n match
+      case 0 => Nil()
+      case _ => l match
+        case Cons(h, t) => Cons(h, take(t)(n - 1))
+        case _ => Nil()
     
+    def concat[A](l1: Sequence[A], l2: Sequence[A]): Sequence[A] = l1 match
+      case Cons(h, t) => t match
+        case Cons(_, _) => Cons(h, concat(t, l2))
+        case _ => Cons(h, l2)
+      case _ => l2
+    
+    def flatMap[A, B](l: Sequence[A])(mapper: A => Sequence[B]): Sequence[B] = l match
+      case Cons(h, t) => mapper(h) match
+        case Cons(h, _) => Cons(h, flatMap(t)(mapper))
+        case _ => Nil()
+      case _ => Nil()
+
+    def min(l: Sequence[Int]): Optional[Int] =
+      def getMin(l: Sequence[Int], currentMin: Optional[Int]): Optional[Int] = l match
+        case Cons(h, t) => currentMin match
+          case Optional.Just(x) if x < h => getMin(t, Optional.Just(x))
+          case _ => getMin(t, Optional.Just(h))
+        case _ => currentMin
+      getMin(l, Optional.Empty())
+
+
 @main def trySequences =
   import Sequences.* 
   val l = Sequence.Cons(10, Sequence.Cons(20, Sequence.Cons(30, Sequence.Nil())))
