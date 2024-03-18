@@ -37,11 +37,24 @@ object Streams extends App :
     def iterate[A](init: => A)(next: A => A): Stream[A] =
       cons(init, iterate(next(init))(next))
 
-    // Task 3
-
     def takeWhile[A](stream: Stream[A])(pred: A => Boolean): Stream[A] = stream match
       case Cons(head, tail) if pred(head()) => cons(head(), takeWhile(tail())(pred))
       case _ => Empty()
+
+    def fill[A](n: Int)(k: A): Stream[A] = n match
+      case 1 => Cons(() => k, () => Empty())
+      case _ => Cons(() => k, () => fill(n - 1)(k))
+    
+    def pell(): Stream[Int] =
+      def pellCalculator(n: Int, n1: Int, n2: Int): Stream[Int] = 
+        val newPell: Int = 2 * n1 + n2
+        n match
+          case 0 => Cons(() => 0, () => pellCalculator(1, 0, 0))
+          case 1 => Cons(() => 1, () => pellCalculator(2, 1, 0))
+          case _ => Cons(() => newPell, () => pellCalculator(n + 1, newPell, n1))
+      pellCalculator(0, 0, 0)
+
+      
 
   end Stream
 
