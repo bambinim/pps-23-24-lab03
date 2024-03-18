@@ -57,5 +57,5 @@ class SequenceTest:
     assertEquals(Cons("PPS", Cons("PCD", Nil())), sl.teachersCourses())
 
   @Test def testLeftFolding() =
-    assertEquals(60, foldLeft(l)(0)(_ + _))
-    assertEquals("102030", foldLeft(l)("")(_ + _))
+    assertEquals(60, l.foldLeft(0)(_ + _))
+    assertEquals("102030", l.foldLeft("")(_ + _))

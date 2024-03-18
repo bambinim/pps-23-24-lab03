@@ -64,9 +64,10 @@ object Sequences: // Essentially, generic linkedlists
           case _ => Nil()
         )
 
-    def foldLeft[A, B](l: Sequence[A])(acc: B)(operator: (B, A) => B): B = l match
-      case Cons(h, t) => foldLeft(t)(operator(acc, h))(operator)
-      case _ => acc
+    extension [A](l: Sequence[A])
+      def foldLeft[B](acc: B)(operator: (B, A) => B): B = l match
+        case Cons(h, t) => t.foldLeft(operator(acc, h))(operator)
+        case _ => acc
       
 
 @main def trySequences =
